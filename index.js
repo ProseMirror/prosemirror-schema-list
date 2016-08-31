@@ -1,7 +1,7 @@
 const {findWrapping, liftTarget, canSplit, ReplaceAroundStep} = require("../transform")
 const {Block, Attribute, Slice, Fragment, NodeRange} = require("../model")
 
-// ;; An ordered list node type. Has a single attribute, `order`,
+// ::- An ordered list node type. Has a single attribute, `order`,
 // which determines the number at which the list starts counting, and
 // defaults to 1.
 class OrderedList extends Block {
@@ -17,14 +17,14 @@ class OrderedList extends Block {
 }
 exports.OrderedList = OrderedList
 
-// ;; A bullet list node type.
+// ::- A bullet list node type.
 class BulletList extends Block {
   get matchDOMTag() { return {"ul": null} }
   toDOM() { return ["ul", 0] }
 }
 exports.BulletList = BulletList
 
-// ;; A list item node type.
+// ::- A list item node type.
 class ListItem extends Block {
   get matchDOMTag() { return {"li": null} }
   toDOM() { return ["li", 0] }
