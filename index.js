@@ -54,7 +54,7 @@ exports.addListNodes = addListNodes
 // assume lists to be nestable, but with the restriction that the
 // first child of a list item is not a list.
 
-// :: (NodeType, ?Object) → (state: EditorState, onAction: ?(action: Object)) → bool
+// :: (NodeType, ?Object) → (state: EditorState, onAction: ?(action: Action)) → bool
 // Returns a command function that wraps the selection in a list with
 // the given type an attributes. If `apply` is `false`, only return a
 // value to indicate whether this is possible, but don't actually
@@ -120,7 +120,7 @@ function splitListItem(nodeType) {
 }
 exports.splitListItem = splitListItem
 
-// :: (NodeType) → (state: EditorState, onAction: ?(action: Object)) → bool
+// :: (NodeType) → (state: EditorState, onAction: ?(action: Action)) → bool
 // Create a command to lift the list item around the selection up into
 // a wrapping list.
 function liftListItem(nodeType) {
@@ -144,7 +144,7 @@ function liftListItem(nodeType) {
 }
 exports.liftListItem = liftListItem
 
-// :: (NodeType) → (state: EditorState, onAction: ?(action: Object)) → bool
+// :: (NodeType) → (state: EditorState, onAction: ?(action: Action)) → bool
 // Create a command to sink the list item around the selection down
 // into an inner list.
 function sinkListItem(nodeType) {
