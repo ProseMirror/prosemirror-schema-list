@@ -50,10 +50,6 @@ function addListNodes(nodes, itemContent, listGroup) {
 }
 exports.addListNodes = addListNodes
 
-// !! This module exports a number of list-related commands, which
-// assume lists to be nestable, but with the restriction that the
-// first child of a list item is not a list.
-
 // :: (NodeType, ?Object) → (state: EditorState, onAction: ?(action: Action)) → bool
 // Returns a command function that wraps the selection in a list with
 // the given type an attributes. If `apply` is `false`, only return a
