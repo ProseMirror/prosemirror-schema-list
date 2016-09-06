@@ -1,5 +1,5 @@
-const {findWrapping, liftTarget, canSplit, ReplaceAroundStep} = require("../transform")
-const {Block, Attribute, Slice, Fragment, NodeRange} = require("../model")
+const {findWrapping, liftTarget, canSplit, ReplaceAroundStep} = require("prosemirror-transform")
+const {Block, Attribute, Slice, Fragment, NodeRange} = require("prosemirror-model")
 
 // ::- An ordered list node type. Has a single attribute, `order`,
 // which determines the number at which the list starts counting, and
