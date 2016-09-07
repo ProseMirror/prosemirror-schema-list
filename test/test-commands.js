@@ -1,5 +1,5 @@
 const {EditorState} = require("prosemirror-state")
-const {schema, sameDoc, doc, blockquote, pre, h1, h2, p, li, ol, ul, em, hr} = require("prosemirror-model/test/build")
+const {schema, eq, doc, blockquote, pre, h1, h2, p, li, ol, ul, em, hr} = require("prosemirror-model/test/build")
 const {selFor} = require("prosemirror-state/test/state")
 const ist = require("ist")
 const {wrapInList, splitListItem, liftListItem, sinkListItem} = require("../src/schema-list")
@@ -7,7 +7,7 @@ const {wrapInList, splitListItem, liftListItem, sinkListItem} = require("../src/
 function apply(doc, command, result) {
   let state = EditorState.create({doc, selection: selFor(doc)})
   command(state, action => state = state.applyAction(action))
-  ist(state.doc, result || doc, sameDoc)
+  ist(state.doc, result || doc, eq)
 }
 
 describe("wrapInList", () => {
