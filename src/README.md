@@ -2,11 +2,11 @@ This module exports list-related schema elements and commands. The
 commands assume which assume lists to be nestable, but with the
 restriction that the first child of a list item is a plain paragraph.
 
-These are required node types:
+These are the node specs:
 
-@OrderedList
-@BulletList
-@ListItem
+@orderedList
+@bulletList
+@listItem
 
 You can extend a schema with this helper function.
 

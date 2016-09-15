@@ -1,35 +1,43 @@
 const {findWrapping, liftTarget, canSplit, ReplaceAroundStep} = require("prosemirror-transform")
-const {Block, Attribute, Slice, Fragment, NodeRange} = require("prosemirror-model")
+const {Slice, Fragment, NodeRange} = require("prosemirror-model")
 
-// ::- An ordered list node type. Has a single attribute, `order`,
+// :: NodeSpec
+// An ordered list node type spec. Has a single attribute, `order`,
 // which determines the number at which the list starts counting, and
 // defaults to 1.
-class OrderedList extends Block {
-  get attrs() { return {order: new Attribute({default: 1})} }
-  get matchDOMTag() {
-    return {"ol": dom => ({
-      order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1
-    })}
-  }
+const orderedList = {
+  attrs: {order: {default: 1}},
+  matchDOMTag: {"ol": dom => ({
+    order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1
+  })},
   toDOM(node) {
     return ["ol", {start: node.attrs.order == 1 ? null : node.attrs.order}, 0]
   }
 }
-exports.OrderedList = OrderedList
+exports.orderedList = orderedList
 
-// ::- A bullet list node type.
-class BulletList extends Block {
-  get matchDOMTag() { return {"ul": null} }
+// :: NodeSpec
+// A bullet list node spec.
+const bulletList = {
+  matchDOMTag: {"ul": null},
   toDOM() { return ["ul", 0] }
 }
-exports.BulletList = BulletList
+exports.bulletList = bulletList
 
-// ::- A list item node type.
-class ListItem extends Block {
-  get matchDOMTag() { return {"li": null} }
+// :: NodeSpec
+// A list item node spec.
+const listItem = {
+  matchDOMTag: {"li": null},
   toDOM() { return ["li", 0] }
 }
-exports.ListItem = ListItem
+exports.listItem = listItem
+
+function add(obj, props) {
+  let copy = {}
+  for (let prop in obj) copy[prop] = obj[prop]
+  for (let prop in props) copy[prop] = props[prop]
+  return copy
+}
 
 // :: (OrderedMap, string, ?string) → OrderedMap
 // Convenience function for adding list-related node types to a map
@@ -43,9 +51,9 @@ exports.ListItem = ListItem
 // name to the list node types, for example `"block"`.
 function addListNodes(nodes, itemContent, listGroup) {
   return nodes.append({
-    ordered_list: {type: OrderedList, content: "list_item+", group: listGroup},
-    bullet_list: {type: BulletList, content: "list_item+", group: listGroup},
-    list_item: {type: ListItem, content: itemContent}
+    ordered_list: add(orderedList, {content: "list_item+", group: listGroup}),
+    bullet_list: add(bulletList, {content: "list_item+", group: listGroup}),
+    list_item: add(listItem, {content: itemContent})
   })
 }
 exports.addListNodes = addListNodes
