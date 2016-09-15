@@ -7,9 +7,9 @@ const {Slice, Fragment, NodeRange} = require("prosemirror-model")
 // defaults to 1.
 const orderedList = {
   attrs: {order: {default: 1}},
-  matchDOMTag: {"ol": dom => ({
-    order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1
-  })},
+  parseDOM: [{tag: "ol", getAttrs(dom) {
+    return {order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1}
+  }}],
   toDOM(node) {
     return ["ol", {start: node.attrs.order == 1 ? null : node.attrs.order}, 0]
   }
@@ -19,7 +19,7 @@ exports.orderedList = orderedList
 // :: NodeSpec
 // A bullet list node spec.
 const bulletList = {
-  matchDOMTag: {"ul": null},
+  parseDOM: [{tag: "ul"}],
   toDOM() { return ["ul", 0] }
 }
 exports.bulletList = bulletList
@@ -27,7 +27,7 @@ exports.bulletList = bulletList
 // :: NodeSpec
 // A list item node spec.
 const listItem = {
-  matchDOMTag: {"li": null},
+  parseDOM: [{tag: "li"}],
   toDOM() { return ["li", 0] }
 }
 exports.listItem = listItem
