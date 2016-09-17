@@ -117,8 +117,9 @@ function splitListItem(nodeType) {
     if (grandParent.type != nodeType) return false
     let nextType = $to.pos == $from.end() ? grandParent.defaultContentType($from.indexAfter(-1)) : null
     let tr = state.tr.delete($from.pos, $to.pos)
-    if (!canSplit(tr.doc, $from.pos, 2, nextType)) return false
-    if (onAction) onAction(tr.split($from.pos, 2, nextType).scrollAction())
+    let types = nextType && [null, {type: nextType}]
+    if (!canSplit(tr.doc, $from.pos, 2, types)) return false
+    if (onAction) onAction(tr.split($from.pos, 2, types).scrollAction())
     return true
   }
 }
