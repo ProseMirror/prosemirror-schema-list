@@ -28,7 +28,8 @@ exports.bulletList = bulletList
 // A list item node spec.
 const listItem = {
   parseDOM: [{tag: "li"}],
-  toDOM() { return ["li", 0] }
+  toDOM() { return ["li", 0] },
+  defining: true
 }
 exports.listItem = listItem
 
