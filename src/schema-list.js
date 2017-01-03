@@ -59,13 +59,13 @@ function addListNodes(nodes, itemContent, listGroup) {
 }
 exports.addListNodes = addListNodes
 
-// :: (NodeType, ?Object) → (state: EditorState, onAction: ?(action: Action)) → bool
+// :: (NodeType, ?Object) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Returns a command function that wraps the selection in a list with
 // the given type an attributes. If `apply` is `false`, only return a
 // value to indicate whether this is possible, but don't actually
 // perform the change.
 function wrapInList(nodeType, attrs) {
-  return function(state, onAction) {
+  return function(state, dispatch) {
     let {$from, $to} = state.selection
     let range = $from.blockRange($to), doJoin = false, outerRange = range
     // This is at the top of an existing list item
@@ -80,7 +80,7 @@ function wrapInList(nodeType, attrs) {
     }
     let wrap = findWrapping(outerRange, nodeType, attrs, range)
     if (!wrap) return false
-    if (onAction) onAction(doWrapInList(state.tr, range, wrap, doJoin, nodeType).scrollAction())
+    if (dispatch) dispatch(doWrapInList(state.tr, range, wrap, doJoin, nodeType).scrollIntoView())
     return true
   }
 }
@@ -106,11 +106,11 @@ function doWrapInList(tr, range, wrappers, joinBefore, nodeType) {
   return tr
 }
 
-// :: (NodeType) → (state: EditorState) → bool
+// :: (NodeType) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Build a command that splits a non-empty textblock at the top level
 // of a list item by also splitting that list item.
 function splitListItem(nodeType) {
-  return function(state, onAction) {
+  return function(state, dispatch) {
     let {$from, $to, node} = state.selection
     if ((node && node.isBlock) || !$from.parent.content.size ||
         $from.depth < 2 || !$from.sameParent($to)) return false
@@ -120,21 +120,21 @@ function splitListItem(nodeType) {
     let tr = state.tr.delete($from.pos, $to.pos)
     let types = nextType && [null, {type: nextType}]
     if (!canSplit(tr.doc, $from.pos, 2, types)) return false
-    if (onAction) onAction(tr.split($from.pos, 2, types).scrollAction())
+    if (dispatch) dispatch(tr.split($from.pos, 2, types).scrollIntoView())
     return true
   }
 }
 exports.splitListItem = splitListItem
 
-// :: (NodeType) → (state: EditorState, onAction: ?(action: Action)) → bool
+// :: (NodeType) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Create a command to lift the list item around the selection up into
 // a wrapping list.
 function liftListItem(nodeType) {
-  return function(state, onAction) {
+  return function(state, dispatch) {
     let {$from, $to} = state.selection
     let range = $from.blockRange($to, node => node.childCount && node.firstChild.type == nodeType)
     if (!range || range.depth < 2 || $from.node(range.depth - 1).type != nodeType) return false
-    if (onAction) {
+    if (dispatch) {
       let tr = state.tr, end = range.end, endOfList = $to.end(range.depth)
       if (end < endOfList) {
         // There are siblings after the lifted items, which must become
@@ -143,18 +143,18 @@ function liftListItem(nodeType) {
                                       new Slice(Fragment.from(nodeType.create(null, range.parent.copy())), 1, 0), 1, true))
         range = new NodeRange(tr.doc.resolveNoCache($from.pos), tr.doc.resolveNoCache(endOfList), range.depth)
       }
-      onAction(tr.lift(range, liftTarget(range)).scrollAction())
+      dispatch(tr.lift(range, liftTarget(range)).scrollIntoView())
     }
     return true
   }
 }
 exports.liftListItem = liftListItem
 
-// :: (NodeType) → (state: EditorState, onAction: ?(action: Action)) → bool
+// :: (NodeType) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Create a command to sink the list item around the selection down
 // into an inner list.
 function sinkListItem(nodeType) {
-  return function(state, onAction) {
+  return function(state, dispatch) {
     let {$from, $to} = state.selection
     let range = $from.blockRange($to, node => node.childCount && node.firstChild.type == nodeType)
     if (!range) return false
@@ -163,15 +163,15 @@ function sinkListItem(nodeType) {
     let parent = range.parent, nodeBefore = parent.child(startIndex - 1)
     if (nodeBefore.type != nodeType) return false
 
-    if (onAction) {
+    if (dispatch) {
       let nestedBefore = nodeBefore.lastChild && nodeBefore.lastChild.type == parent.type
       let inner = Fragment.from(nestedBefore ? nodeType.create() : null)
       let slice = new Slice(Fragment.from(nodeType.create(null, Fragment.from(parent.copy(inner)))),
                             nestedBefore ? 3 : 1, 0)
       let before = range.start, after = range.end
-      onAction(state.tr.step(new ReplaceAroundStep(before - (nestedBefore ? 3 : 1), after,
+      dispatch(state.tr.step(new ReplaceAroundStep(before - (nestedBefore ? 3 : 1), after,
                                                    before, after, slice, 1, true))
-               .scrollAction())
+               .scrollIntoView())
     }
     return true
   }
