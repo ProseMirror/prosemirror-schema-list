@@ -68,6 +68,7 @@ function wrapInList(nodeType, attrs) {
   return function(state, dispatch) {
     let {$from, $to} = state.selection
     let range = $from.blockRange($to), doJoin = false, outerRange = range
+    if (!range) return false
     // This is at the top of an existing list item
     if (range.depth >= 2 && $from.node(range.depth - 1).type.compatibleContent(nodeType) && range.startIndex == 0) {
       // Don't do anything if this is the top of the list
