@@ -1,5 +1,5 @@
 const {EditorState} = require("prosemirror-state")
-const {schema, eq, doc, blockquote, p, li, ol, ul} = require("prosemirror-model/test/build")
+const {schema, eq, doc, blockquote, p, li, ol, ul} = require("prosemirror-test-builder")
 const {selFor} = require("prosemirror-state/test/state")
 const ist = require("ist")
 const {wrapInList, splitListItem, liftListItem, sinkListItem} = require("../dist/schema-list")
