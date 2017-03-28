@@ -117,7 +117,7 @@ function splitListItem(nodeType) {
         $from.depth < 2 || !$from.sameParent($to)) return false
     let grandParent = $from.node(-1)
     if (grandParent.type != nodeType) return false
-    let nextType = $to.pos == $from.end() ? grandParent.defaultContentType($from.indexAfter(-1)) : null
+    let nextType = $to.pos == $from.end() ? grandParent.defaultContentType(0) : null
     let tr = state.tr.delete($from.pos, $to.pos)
     let types = nextType && [null, {type: nextType}]
     if (!canSplit(tr.doc, $from.pos, 2, types)) return false
