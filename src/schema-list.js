@@ -64,13 +64,13 @@ exports.addListNodes = addListNodes
 // the given type an attributes. If `apply` is `false`, only return a
 // value to indicate whether this is possible, but don't actually
 // perform the change.
-function wrapInList(nodeType, attrs) {
+function wrapInList(listType, attrs) {
   return function(state, dispatch) {
     let {$from, $to} = state.selection
     let range = $from.blockRange($to), doJoin = false, outerRange = range
     if (!range) return false
     // This is at the top of an existing list item
-    if (range.depth >= 2 && $from.node(range.depth - 1).type.compatibleContent(nodeType) && range.startIndex == 0) {
+    if (range.depth >= 2 && $from.node(range.depth - 1).type.compatibleContent(listType) && range.startIndex == 0) {
       // Don't do anything if this is the top of the list
       if ($from.index(range.depth - 1) == 0) return false
       let $insert = state.doc.resolve(range.start - 2)
@@ -79,15 +79,15 @@ function wrapInList(nodeType, attrs) {
         range = new NodeRange($from, state.doc.resolve($to.end(range.depth)), range.depth)
       doJoin = true
     }
-    let wrap = findWrapping(outerRange, nodeType, attrs, range)
+    let wrap = findWrapping(outerRange, listType, attrs, range)
     if (!wrap) return false
-    if (dispatch) dispatch(doWrapInList(state.tr, range, wrap, doJoin, nodeType).scrollIntoView())
+    if (dispatch) dispatch(doWrapInList(state.tr, range, wrap, doJoin, listType).scrollIntoView())
     return true
   }
 }
 exports.wrapInList = wrapInList
 
-function doWrapInList(tr, range, wrappers, joinBefore, nodeType) {
+function doWrapInList(tr, range, wrappers, joinBefore, listType) {
   let content = Fragment.empty
   for (let i = wrappers.length - 1; i >= 0; i--)
     content = Fragment.from(wrappers[i].type.create(wrappers[i].attrs, content))
@@ -96,7 +96,7 @@ function doWrapInList(tr, range, wrappers, joinBefore, nodeType) {
                                 new Slice(content, 0, 0), wrappers.length, true))
 
   let found = 0
-  for (let i = 0; i < wrappers.length; i++) if (wrappers[i].type == nodeType) found = i + 1
+  for (let i = 0; i < wrappers.length; i++) if (wrappers[i].type == listType) found = i + 1
   let splitDepth = wrappers.length - found
 
   let splitPos = range.start + wrappers.length - (joinBefore ? 2 : 0), parent = range.parent
@@ -110,13 +110,13 @@ function doWrapInList(tr, range, wrappers, joinBefore, nodeType) {
 // :: (NodeType) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Build a command that splits a non-empty textblock at the top level
 // of a list item by also splitting that list item.
-function splitListItem(nodeType) {
+function splitListItem(itemType) {
   return function(state, dispatch) {
     let {$from, $to, node} = state.selection
     if ((node && node.isBlock) || !$from.parent.content.size ||
         $from.depth < 2 || !$from.sameParent($to)) return false
     let grandParent = $from.node(-1)
-    if (grandParent.type != nodeType) return false
+    if (grandParent.type != itemType) return false
     let nextType = $to.pos == $from.end() ? grandParent.defaultContentType($from.indexAfter(-1)) : null
     let tr = state.tr.delete($from.pos, $to.pos)
     let types = nextType && [null, {type: nextType}]
@@ -130,44 +130,75 @@ exports.splitListItem = splitListItem
 // :: (NodeType) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Create a command to lift the list item around the selection up into
 // a wrapping list.
-function liftListItem(nodeType) {
+function liftListItem(itemType) {
   return function(state, dispatch) {
     let {$from, $to} = state.selection
-    let range = $from.blockRange($to, node => node.childCount && node.firstChild.type == nodeType)
-    if (!range || range.depth < 2 || $from.node(range.depth - 1).type != nodeType) return false
-    if (dispatch) {
-      let tr = state.tr, end = range.end, endOfList = $to.end(range.depth)
-      if (end < endOfList) {
-        // There are siblings after the lifted items, which must become
-        // children of the last item
-        tr.step(new ReplaceAroundStep(end - 1, endOfList, end, endOfList,
-                                      new Slice(Fragment.from(nodeType.create(null, range.parent.copy())), 1, 0), 1, true))
-        range = new NodeRange(tr.doc.resolveNoCache($from.pos), tr.doc.resolveNoCache(endOfList), range.depth)
-      }
-      dispatch(tr.lift(range, liftTarget(range)).scrollIntoView())
-    }
-    return true
+    let range = $from.blockRange($to, node => node.childCount && node.firstChild.type == itemType)
+    if (!range) return false
+    if (!dispatch) return true
+    if ($from.node(range.depth - 1).type == itemType) // Inside a parent list
+      return liftToOuterList(state, dispatch, itemType, range)
+    else // Outer list node
+      return liftOutOfList(state, dispatch, range)
   }
 }
 exports.liftListItem = liftListItem
 
+function liftToOuterList(state, dispatch, itemType, range) {
+  let tr = state.tr, end = range.end, endOfList = range.$to.end(range.depth)
+  if (end < endOfList) {
+    // There are siblings after the lifted items, which must become
+    // children of the last item
+    tr.step(new ReplaceAroundStep(end - 1, endOfList, end, endOfList,
+                                  new Slice(Fragment.from(itemType.create(null, range.parent.copy())), 1, 0), 1, true))
+    range = new NodeRange(tr.doc.resolveNoCache(range.$from.pos), tr.doc.resolveNoCache(endOfList), range.depth)
+  }
+  dispatch(tr.lift(range, liftTarget(range)).scrollIntoView())
+  return true
+}
+
+function liftOutOfList(state, dispatch, range) {
+  let tr = state.tr, list = range.parent
+  // Merge the list items into a single big item
+  for (let pos = range.end, i = range.endIndex - 1, e = range.startIndex; i > e; i--) {
+    pos -= list.child(i).nodeSize
+    tr.delete(pos - 1, pos + 1)
+  }
+  let $start = tr.doc.resolve(range.start), item = $start.nodeAfter
+  let atStart = range.startIndex == 0, atEnd = range.endIndex == list.childCount
+  let parent = $start.node(-1), indexBefore = $start.index(-1)
+  if (!parent.canReplace(indexBefore + (atStart ? 0 : 1), indexBefore + 1,
+                         item.content.append(atEnd ? Fragment.empty : Fragment.from(list))))
+    return false
+  let start = $start.pos, end = start + item.nodeSize
+  // Strip off the surrounding list. At the sides where we're not at
+  // the end of the list, the existing list is closed. At sides where
+  // this is the end, it is overwritten to its end.
+  tr.step(new ReplaceAroundStep(start - (atStart ? 1 : 0), end + (atEnd ? 1 : 0), start + 1, end - 1,
+                                new Slice((atStart ? Fragment.empty : Fragment.from(list.copy(Fragment.empty)))
+                                          .append(atEnd ? Fragment.empty : Fragment.from(list.copy(Fragment.empty))),
+                                          atStart ? 0 : 1, atEnd ? 0 : 1), atStart ? 0 : 1))
+  dispatch(tr.scrollIntoView())
+  return true
+}
+
 // :: (NodeType) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Create a command to sink the list item around the selection down
 // into an inner list.
-function sinkListItem(nodeType) {
+function sinkListItem(itemType) {
   return function(state, dispatch) {
     let {$from, $to} = state.selection
-    let range = $from.blockRange($to, node => node.childCount && node.firstChild.type == nodeType)
+    let range = $from.blockRange($to, node => node.childCount && node.firstChild.type == itemType)
     if (!range) return false
     let startIndex = range.startIndex
     if (startIndex == 0) return false
     let parent = range.parent, nodeBefore = parent.child(startIndex - 1)
-    if (nodeBefore.type != nodeType) return false
+    if (nodeBefore.type != itemType) return false
 
     if (dispatch) {
       let nestedBefore = nodeBefore.lastChild && nodeBefore.lastChild.type == parent.type
-      let inner = Fragment.from(nestedBefore ? nodeType.create() : null)
-      let slice = new Slice(Fragment.from(nodeType.create(null, Fragment.from(parent.copy(inner)))),
+      let inner = Fragment.from(nestedBefore ? itemType.create() : null)
+      let slice = new Slice(Fragment.from(itemType.create(null, Fragment.from(parent.copy(inner)))),
                             nestedBefore ? 3 : 1, 0)
       let before = range.start, after = range.end
       dispatch(state.tr.step(new ReplaceAroundStep(before - (nestedBefore ? 3 : 1), after,

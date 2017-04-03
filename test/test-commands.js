@@ -69,6 +69,26 @@ describe("liftListItem", () => {
   it("can lift two items from a nested three-item list", () =>
      apply(doc(ul(li(p("hello"), ul(li(p("o<a>ne")), li(p("two<b>")), li(p("three")))))), lift,
            doc(ul(li(p("hello")), li(p("one")), li(p("two"), ul(li(p("three"))))))))
+
+  it("can lift an item out of a list", () =>
+     apply(doc(p("a"), ul(li(p("b<a>"))), p("c")), lift,
+           doc(p("a"), p("b"), p("c"))))
+
+  it("can lift two items out of a list", () =>
+     apply(doc(p("a"), ul(li(p("b<a>")), li(p("c<b>"))), p("d")), lift,
+           doc(p("a"), p("b"), p("c"), p("d"))))
+
+  it("can lift three items from the middle of a list", () =>
+     apply(doc(ul(li(p("a")), li(p("b<a>")), li(p("c")), li(p("d<b>")), li(p("e")))), lift,
+           doc(ul(li(p("a"))), p("b"), p("c"), p("d"), ul(li(p("e"))))))
+
+  it("can lift the first item from a list", () =>
+     apply(doc(ul(li(p("a<a>")), li(p("b")), li(p("c")))), lift,
+           doc(p("a"), ul(li(p("b")), li(p("c"))))))
+
+  it("can lift the last item from a list", () =>
+     apply(doc(ul(li(p("a")), li(p("b")), li(p("c<a>")))), lift,
+           doc(ul(li(p("a")), li(p("b"))), p("c"))))
 })
 
 describe("sinkListItem", () => {
