@@ -50,6 +50,9 @@ describe("splitListItem", () => {
   it("can split a list item", () =>
     apply(doc(ul(li(p("foo<a>bar")))), split, doc(ul(li(p("foo")), li(p("bar"))))))
 
+  it("can split a list item at the end", () =>
+    apply(doc(ul(li(p("foobar<a>")))), split, doc(ul(li(p("foobar")), li(p())))))
+
   it("deletes selected content", () =>
      apply(doc(ul(li(p("foo<a>ba<b>r")))), split,
            doc(ul(li(p("foo")), li(p("r"))))))
