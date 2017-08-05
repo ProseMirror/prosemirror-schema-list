@@ -8,6 +8,7 @@ function apply(doc, command, result) {
   let state = EditorState.create({doc, selection: selFor(doc)})
   command(state, tr => state = state.apply(tr))
   ist(state.doc, result || doc, eq)
+  if (result && result.tag.a != null) ist(state.selection,  selFor(result), eq)
 }
 
 describe("wrapInList", () => {
@@ -56,6 +57,10 @@ describe("splitListItem", () => {
   it("deletes selected content", () =>
      apply(doc(ul(li(p("foo<a>ba<b>r")))), split,
            doc(ul(li(p("foo")), li(p("r"))))))
+
+  it("splits when lifting from a nested list", () =>
+     apply(doc(ul(li(p("a"), ul(li(p("b")), li(p("<a>")))))), split,
+           doc(ul(li(p("a"), ul(li(p("b")))), li(p("<a>"))))))
 })
 
 describe("liftListItem", () => {

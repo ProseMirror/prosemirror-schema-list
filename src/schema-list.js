@@ -113,10 +113,27 @@ function doWrapInList(tr, range, wrappers, joinBefore, listType) {
 function splitListItem(itemType) {
   return function(state, dispatch) {
     let {$from, $to, node} = state.selection
-    if ((node && node.isBlock) || !$from.parent.content.size ||
-        $from.depth < 2 || !$from.sameParent($to)) return false
+    if ((node && node.isBlock) || $from.depth < 2 || !$from.sameParent($to)) return false
     let grandParent = $from.node(-1)
     if (grandParent.type != itemType) return false
+    if ($from.parent.content.size == 0) {
+      // In an empty block. If this is a nested list, the wrapping
+      // list item should be split. Otherwise, bail out and let next
+      // command handle lifting.
+      if ($from.depth == 2 || $from.node(-3).type != itemType ||
+          $from.index(-2) != $from.node(-2).childCount - 1) return false
+      if (dispatch) {
+        let wrap = Fragment.empty
+        // Build a fragment containing empty versions of the structure
+        // from the outer list item to the parent node of the cursor
+        for (let d = $from.depth - 1; d >= $from.depth - 3; d--)
+          wrap = Fragment.from($from.node(d).copy(wrap))
+        // Add a second list item with an empty default start node
+        wrap = wrap.append(Fragment.from(itemType.createAndFill()))
+        dispatch(state.tr.replace($from.before(-1), $from.after(-3), new Slice(wrap, 3, 2)).scrollIntoView())
+        return true
+      }
+    }
     let nextType = $to.pos == $from.end() ? grandParent.defaultContentType(0) : null
     let tr = state.tr.delete($from.pos, $to.pos)
     let types = nextType && [null, {type: nextType}]
