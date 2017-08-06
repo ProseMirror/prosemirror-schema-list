@@ -1,11 +1,11 @@
-const {findWrapping, liftTarget, canSplit, ReplaceAroundStep} = require("prosemirror-transform")
-const {Slice, Fragment, NodeRange} = require("prosemirror-model")
+import {findWrapping, liftTarget, canSplit, ReplaceAroundStep} from "prosemirror-transform"
+import {Slice, Fragment, NodeRange} from "prosemirror-model"
 
 // :: NodeSpec
 // An ordered list node type spec. Has a single attribute, `order`,
 // which determines the number at which the list starts counting, and
 // defaults to 1.
-const orderedList = {
+export const orderedList = {
   attrs: {order: {default: 1}},
   parseDOM: [{tag: "ol", getAttrs(dom) {
     return {order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1}
@@ -14,24 +14,21 @@ const orderedList = {
     return ["ol", {start: node.attrs.order == 1 ? null : node.attrs.order}, 0]
   }
 }
-exports.orderedList = orderedList
 
 // :: NodeSpec
 // A bullet list node spec.
-const bulletList = {
+export const bulletList = {
   parseDOM: [{tag: "ul"}],
   toDOM() { return ["ul", 0] }
 }
-exports.bulletList = bulletList
 
 // :: NodeSpec
 // A list item node spec.
-const listItem = {
+export const listItem = {
   parseDOM: [{tag: "li"}],
   toDOM() { return ["li", 0] },
   defining: true
 }
-exports.listItem = listItem
 
 function add(obj, props) {
   let copy = {}
@@ -50,21 +47,20 @@ function add(obj, props) {
 // `"paragraph block*"`, a plain textblock type followed by zero or
 // more arbitrary nodes. `listGroup` can be given to assign a group
 // name to the list node types, for example `"block"`.
-function addListNodes(nodes, itemContent, listGroup) {
+export function addListNodes(nodes, itemContent, listGroup) {
   return nodes.append({
     ordered_list: add(orderedList, {content: "list_item+", group: listGroup}),
     bullet_list: add(bulletList, {content: "list_item+", group: listGroup}),
     list_item: add(listItem, {content: itemContent})
   })
 }
-exports.addListNodes = addListNodes
 
 // :: (NodeType, ?Object) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Returns a command function that wraps the selection in a list with
 // the given type an attributes. If `apply` is `false`, only return a
 // value to indicate whether this is possible, but don't actually
 // perform the change.
-function wrapInList(listType, attrs) {
+export function wrapInList(listType, attrs) {
   return function(state, dispatch) {
     let {$from, $to} = state.selection
     let range = $from.blockRange($to), doJoin = false, outerRange = range
@@ -85,7 +81,6 @@ function wrapInList(listType, attrs) {
     return true
   }
 }
-exports.wrapInList = wrapInList
 
 function doWrapInList(tr, range, wrappers, joinBefore, listType) {
   let content = Fragment.empty
@@ -110,7 +105,7 @@ function doWrapInList(tr, range, wrappers, joinBefore, listType) {
 // :: (NodeType) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Build a command that splits a non-empty textblock at the top level
 // of a list item by also splitting that list item.
-function splitListItem(itemType) {
+export function splitListItem(itemType) {
   return function(state, dispatch) {
     let {$from, $to, node} = state.selection
     if ((node && node.isBlock) || $from.depth < 2 || !$from.sameParent($to)) return false
@@ -142,12 +137,11 @@ function splitListItem(itemType) {
     return true
   }
 }
-exports.splitListItem = splitListItem
 
 // :: (NodeType) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Create a command to lift the list item around the selection up into
 // a wrapping list.
-function liftListItem(itemType) {
+export function liftListItem(itemType) {
   return function(state, dispatch) {
     let {$from, $to} = state.selection
     let range = $from.blockRange($to, node => node.childCount && node.firstChild.type == itemType)
@@ -159,7 +153,6 @@ function liftListItem(itemType) {
       return liftOutOfList(state, dispatch, range)
   }
 }
-exports.liftListItem = liftListItem
 
 function liftToOuterList(state, dispatch, itemType, range) {
   let tr = state.tr, end = range.end, endOfList = range.$to.end(range.depth)
@@ -202,7 +195,7 @@ function liftOutOfList(state, dispatch, range) {
 // :: (NodeType) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Create a command to sink the list item around the selection down
 // into an inner list.
-function sinkListItem(itemType) {
+export function sinkListItem(itemType) {
   return function(state, dispatch) {
     let {$from, $to} = state.selection
     let range = $from.blockRange($to, node => node.childCount && node.firstChild.type == itemType)
@@ -225,4 +218,3 @@ function sinkListItem(itemType) {
     return true
   }
 }
-exports.sinkListItem = sinkListItem
