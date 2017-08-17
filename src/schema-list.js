@@ -118,16 +118,18 @@ export function splitListItem(itemType) {
       if ($from.depth == 2 || $from.node(-3).type != itemType ||
           $from.index(-2) != $from.node(-2).childCount - 1) return false
       if (dispatch) {
-        let wrap = Fragment.empty
+        let wrap = Fragment.empty, keepItem = $from.index(-1) > 0
         // Build a fragment containing empty versions of the structure
         // from the outer list item to the parent node of the cursor
-        for (let d = $from.depth - 1; d >= $from.depth - 3; d--)
+        for (let d = $from.depth - (keepItem ? 1 : 2); d >= $from.depth - 3; d--)
           wrap = Fragment.from($from.node(d).copy(wrap))
         // Add a second list item with an empty default start node
         wrap = wrap.append(Fragment.from(itemType.createAndFill()))
-        dispatch(state.tr.replace($from.before(-1), $from.after(-3), new Slice(wrap, 3, 2)).scrollIntoView())
-        return true
+        let tr = state.tr.replace($from.before(keepItem ? null : -1), $from.after(-3), new Slice(wrap, keepItem ? 3 : 2, 2))
+        tr.setSelection(state.selection.constructor.near(tr.doc.resolve($from.pos + (keepItem ? 3 : 2))))
+        dispatch(tr.scrollIntoView())
       }
+      return true
     }
     let nextType = $to.pos == $from.end() ? grandParent.defaultContentType(0) : null
     let tr = state.tr.delete($from.pos, $to.pos)

@@ -59,8 +59,12 @@ describe("splitListItem", () => {
            doc(ul(li(p("foo")), li(p("r"))))))
 
   it("splits when lifting from a nested list", () =>
-     apply(doc(ul(li(p("a"), ul(li(p("b")), li(p("<a>")))))), split,
-           doc(ul(li(p("a"), ul(li(p("b")))), li(p("<a>"))))))
+     apply(doc(ul(li(p("a"), ul(li(p("b")), li(p("<a>"))))), p("x")), split,
+           doc(ul(li(p("a"), ul(li(p("b")))), li(p("<a>"))), p("x"))))
+
+  it("can lift from a continued nested list item", () =>
+     apply(doc(ul(li(p("a"), ul(li(p("b")), li(p("ok"), p("<a>"))))), p("x")), split,
+           doc(ul(li(p("a"), ul(li(p("b")), li(p("ok")))), li(p("<a>"))), p("x"))))
 })
 
 describe("liftListItem", () => {
