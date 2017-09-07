@@ -1,8 +1,7 @@
 module.exports = {
-  entry: "./src/schema-list.js",
-  dest: "dist/schema-list.js",
-  format: "cjs",
-  sourceMap: true,
+  input: "./src/schema-list.js",
+  output: {format: "cjs", file: "dist/schema-list.js"},
+  sourcemap: true,
   plugins: [require("rollup-plugin-buble")()],
   external(id) { return !/^[\.\/]/.test(id) }
 }
