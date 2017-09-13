@@ -2,9 +2,10 @@ import {findWrapping, liftTarget, canSplit, ReplaceAroundStep} from "prosemirror
 import {Slice, Fragment, NodeRange} from "prosemirror-model"
 
 // :: NodeSpec
-// An ordered list node type spec. Has a single attribute, `order`,
-// which determines the number at which the list starts counting, and
-// defaults to 1.
+// An ordered list [node spec](#model.NodeSpec). Has a single
+// attribute, `order`, which determines the number at which the list
+// starts counting, and defaults to 1. Represented as an `<ol>`
+// element.
 export const orderedList = {
   attrs: {order: {default: 1}},
   parseDOM: [{tag: "ol", getAttrs(dom) {
@@ -16,14 +17,14 @@ export const orderedList = {
 }
 
 // :: NodeSpec
-// A bullet list node spec.
+// A bullet list node spec, represented in the DOM as `<ul>`.
 export const bulletList = {
   parseDOM: [{tag: "ul"}],
   toDOM() { return ["ul", 0] }
 }
 
 // :: NodeSpec
-// A list item node spec.
+// A list item (`<li>`) spec.
 export const listItem = {
   parseDOM: [{tag: "li"}],
   toDOM() { return ["li", 0] },
@@ -39,14 +40,17 @@ function add(obj, props) {
 
 // :: (OrderedMap, string, ?string) → OrderedMap
 // Convenience function for adding list-related node types to a map
-// describing the nodes in a schema. Adds `OrderedList` as
-// `"ordered_list"`, `BulletList` as `"bullet_list"`, and `ListItem`
-// as `"list_item"`. `itemContent` determines the content expression
-// for the list items. If you want the commands defined in this module
-// to apply to your list structure, it should have a shape like
-// `"paragraph block*"`, a plain textblock type followed by zero or
-// more arbitrary nodes. `listGroup` can be given to assign a group
-// name to the list node types, for example `"block"`.
+// specifying the nodes for a schema. Adds
+// [`orderedList`](#schema-list.orderedList) as `"ordered_list"`,
+// [`bulletList`](#schema-list.bulletList) as `"bullet_list"`, and
+// [`listItem`](#schema-list.listItem) as `"list_item"`.
+//
+// `itemContent` determines the content expression for the list items.
+// If you want the commands defined in this module to apply to your
+// list structure, it should have a shape like `"paragraph block*"` or
+// `"paragraph (ordered_list | bullet_list)*"`. `listGroup` can be
+// given to assign a group name to the list node types, for example
+// `"block"`.
 export function addListNodes(nodes, itemContent, listGroup) {
   return nodes.append({
     ordered_list: add(orderedList, {content: "list_item+", group: listGroup}),
@@ -57,7 +61,7 @@ export function addListNodes(nodes, itemContent, listGroup) {
 
 // :: (NodeType, ?Object) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Returns a command function that wraps the selection in a list with
-// the given type an attributes. If `apply` is `false`, only return a
+// the given type an attributes. If `dispatch` is null, only return a
 // value to indicate whether this is possible, but don't actually
 // perform the change.
 export function wrapInList(listType, attrs) {
