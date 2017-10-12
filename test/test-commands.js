@@ -1,8 +1,17 @@
-const {EditorState} = require("prosemirror-state")
+const {EditorState, Selection, TextSelection, NodeSelection} = require("prosemirror-state")
 const {schema, eq, doc, blockquote, p, li, ol, ul} = require("prosemirror-test-builder")
-const {selFor} = require("prosemirror-state/test/state")
 const ist = require("ist")
 const {wrapInList, splitListItem, liftListItem, sinkListItem} = require("../dist/schema-list")
+
+function selFor(doc) {
+  let a = doc.tag.a
+  if (a != null) {
+    let $a = doc.resolve(a)
+    if ($a.parent.inlineContent) return new TextSelection($a, doc.tag.b != null ? doc.resolve(doc.tag.b) : undefined)
+    else return new NodeSelection($a)
+  }
+  return Selection.atStart(doc)
+}
 
 function apply(doc, command, result) {
   let state = EditorState.create({doc, selection: selFor(doc)})
