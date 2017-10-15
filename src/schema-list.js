@@ -38,7 +38,7 @@ function add(obj, props) {
   return copy
 }
 
-// :: (OrderedMap, string, ?string) → OrderedMap
+// :: (OrderedMap<NodeSpec>, string, ?string) → OrderedMap<NodeSpec>
 // Convenience function for adding list-related node types to a map
 // specifying the nodes for a schema. Adds
 // [`orderedList`](#schema-list.orderedList) as `"ordered_list"`,
