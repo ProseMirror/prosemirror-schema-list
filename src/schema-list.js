@@ -167,7 +167,7 @@ function liftToOuterList(state, dispatch, itemType, range) {
     // children of the last item
     tr.step(new ReplaceAroundStep(end - 1, endOfList, end, endOfList,
                                   new Slice(Fragment.from(itemType.create(null, range.parent.copy())), 1, 0), 1, true))
-    range = new NodeRange(tr.doc.resolveNoCache(range.$from.pos), tr.doc.resolveNoCache(endOfList), range.depth)
+    range = new NodeRange(tr.doc.resolve(range.$from.pos), tr.doc.resolve(endOfList), range.depth)
   }
   dispatch(tr.lift(range, liftTarget(range)).scrollIntoView())
   return true
