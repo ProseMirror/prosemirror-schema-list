@@ -1,6 +1,8 @@
 import {findWrapping, liftTarget, canSplit, ReplaceAroundStep} from "prosemirror-transform"
 import {Slice, Fragment, NodeRange} from "prosemirror-model"
 
+const olDOM = ["ol", 0], ulDOM = ["ul", 0], liDOM = ["li", 0]
+
 // :: NodeSpec
 // An ordered list [node spec](#model.NodeSpec). Has a single
 // attribute, `order`, which determines the number at which the list
@@ -12,7 +14,7 @@ export const orderedList = {
     return {order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1}
   }}],
   toDOM(node) {
-    return ["ol", {start: node.attrs.order == 1 ? null : node.attrs.order}, 0]
+    return node.attrs.order == 1 ? olDOM : ["ol", {start: node.attrs.order}, 0]
   }
 }
 
@@ -20,14 +22,14 @@ export const orderedList = {
 // A bullet list node spec, represented in the DOM as `<ul>`.
 export const bulletList = {
   parseDOM: [{tag: "ul"}],
-  toDOM() { return ["ul", 0] }
+  toDOM() { return ulDOM }
 }
 
 // :: NodeSpec
 // A list item (`<li>`) spec.
 export const listItem = {
   parseDOM: [{tag: "li"}],
-  toDOM() { return ["li", 0] },
+  toDOM() { return liDOM },
   defining: true
 }
 
