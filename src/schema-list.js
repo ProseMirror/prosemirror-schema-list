@@ -102,8 +102,11 @@ function doWrapInList(tr, range, wrappers, joinBefore, listType) {
 
   let splitPos = range.start + wrappers.length - (joinBefore ? 2 : 0), parent = range.parent
   for (let i = range.startIndex, e = range.endIndex, first = true; i < e; i++, first = false) {
-    if (!first && canSplit(tr.doc, splitPos, splitDepth)) tr.split(splitPos, splitDepth)
-    splitPos += parent.child(i).nodeSize + (first ? 0 : 2 * splitDepth)
+    if (!first && canSplit(tr.doc, splitPos, splitDepth)) {
+      tr.split(splitPos, splitDepth)
+      splitPos += 2 * splitDepth
+    }
+    splitPos += parent.child(i).nodeSize
   }
   return tr
 }

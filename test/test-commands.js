@@ -46,6 +46,10 @@ describe("wrapInList", () => {
   it("joins with the list item above when wrapping its first paragraph", () =>
      apply(doc(ul(li(p("foo")), li(p("<a>bar")), li(p("baz")))), wrapo,
            doc(ul(li(p("foo"), ol(li(p("bar")))), li(p("baz"))))))
+
+  it("only splits items where valid", () =>
+     apply(doc(p("<a>one"), ol(li("two")), p("three<b>")), wrapo,
+           doc(ol(li(p("one"), ol(li("two"))), li(p("three"))))))
 })
 
 describe("splitListItem", () => {
