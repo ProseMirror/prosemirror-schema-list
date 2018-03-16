@@ -1,3 +1,9 @@
+## 1.0.1 (2018-03-16)
+
+### Bug fixes
+
+Fixes a bug that caused [`wrapInList`](https://prosemirror.net/docs/ref/#schema-list.wrapInList) to split list items in the wrong place.
+
 ## 0.23.0 (2017-09-13)
 
 ### Bug fixes
