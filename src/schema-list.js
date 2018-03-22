@@ -140,7 +140,7 @@ export function splitListItem(itemType) {
       }
       return true
     }
-    let nextType = $to.pos == $from.end() ? grandParent.defaultContentType(0) : null
+    let nextType = $to.pos == $from.end() ? grandParent.contentMatchAt($from.indexAfter(-1)).defaultType : null
     let tr = state.tr.delete($from.pos, $to.pos)
     let types = nextType && [null, {type: nextType}]
     if (!canSplit(tr.doc, $from.pos, 2, types)) return false
