@@ -219,7 +219,7 @@ export function sinkListItem(itemType) {
     if (dispatch) {
       let nestedBefore = nodeBefore.lastChild && nodeBefore.lastChild.type == parent.type
       let inner = Fragment.from(nestedBefore ? itemType.create() : null)
-      let slice = new Slice(Fragment.from(itemType.create(null, Fragment.from(parent.copy(inner)))),
+      let slice = new Slice(Fragment.from(itemType.create(null, Fragment.from(parent.type.create(parent.attrs, inner)))),
                             nestedBefore ? 3 : 1, 0)
       let before = range.start, after = range.end
       dispatch(state.tr.step(new ReplaceAroundStep(before - (nestedBefore ? 3 : 1), after,
