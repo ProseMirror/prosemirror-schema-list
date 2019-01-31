@@ -1,3 +1,9 @@
+## 1.0.2 (2019-01-31)
+
+### Bug fixes
+
+`sinkListItem` no longer preserves marks from the outer list when creating an inner list.
+
 ## 1.0.1 (2018-03-16)
 
 ### Bug fixes
