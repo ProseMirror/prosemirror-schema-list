@@ -1,3 +1,9 @@
+## 1.0.3 (2019-04-19)
+
+### Bug fixes
+
+`sinkListItem` will no longer copy the attributes of the parent list when creating an inner list.
+
 ## 1.0.2 (2019-01-31)
 
 ### Bug fixes
