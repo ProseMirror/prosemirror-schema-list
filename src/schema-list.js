@@ -203,10 +203,10 @@ function liftOutOfList(state, dispatch, range) {
   return true
 }
 
-// :: (NodeType) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
+// :: (NodeType, ?Object) → (state: EditorState, dispatch: ?(tr: Transaction)) → bool
 // Create a command to sink the list item around the selection down
-// into an inner list.
-export function sinkListItem(itemType) {
+// into an inner list with the given attributes.
+export function sinkListItem(itemType, attrs) {
   return function(state, dispatch) {
     let {$from, $to} = state.selection
     let range = $from.blockRange($to, node => node.childCount && node.firstChild.type == itemType)
@@ -219,7 +219,7 @@ export function sinkListItem(itemType) {
     if (dispatch) {
       let nestedBefore = nodeBefore.lastChild && nodeBefore.lastChild.type == parent.type
       let inner = Fragment.from(nestedBefore ? itemType.create() : null)
-      let slice = new Slice(Fragment.from(itemType.create(null, Fragment.from(parent.type.create(parent.attrs, inner)))),
+      let slice = new Slice(Fragment.from(itemType.create(null, Fragment.from(parent.type.create(attrs, inner)))),
                             nestedBefore ? 3 : 1, 0)
       let before = range.start, after = range.end
       dispatch(state.tr.step(new ReplaceAroundStep(before - (nestedBefore ? 3 : 1), after,
