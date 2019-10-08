@@ -1,3 +1,9 @@
+## 1.0.4 (2019-10-08)
+
+### Bug fixes
+
+Fix regression where `splitListItem` doesn't work at the end of an item when the content for list items has different first and non-first allowed nodes.
+
 ## 1.0.3 (2019-04-19)
 
 ### Bug fixes
