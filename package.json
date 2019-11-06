@@ -3,6 +3,7 @@
   "version": "1.0.4",
   "description": "List-related schema elements and commands for ProseMirror",
   "main": "dist/schema-list.js",
+  "module": "src/schema-list.js",
   "license": "MIT",
   "maintainers": [
     {
