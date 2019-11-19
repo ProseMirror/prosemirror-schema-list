@@ -1,7 +1,7 @@
 const {EditorState, Selection, TextSelection, NodeSelection} = require("prosemirror-state")
 const {schema, eq, doc, blockquote, p, li, ol, ul} = require("prosemirror-test-builder")
 const ist = require("ist")
-const {wrapInList, splitListItem, liftListItem, sinkListItem} = require("../dist/schema-list")
+const {wrapInList, splitListItem, liftListItem, sinkListItem} = require("..")
 
 function selFor(doc) {
   let a = doc.tag.a
