@@ -1,19 +1,19 @@
 # prosemirror-schema-list
 
-[ [**WEBSITE**](http://prosemirror.net) | [**ISSUES**](https://github.com/prosemirror/prosemirror/issues) | [**FORUM**](https://discuss.prosemirror.net) | [**GITTER**](https://gitter.im/ProseMirror/prosemirror) | [**CHANGELOG**](https://github.com/ProseMirror/prosemirror-schema-list/blob/master/CHANGELOG.md) ]
+[ [**WEBSITE**](https://prosemirror.net) | [**ISSUES**](https://github.com/prosemirror/prosemirror/issues) | [**FORUM**](https://discuss.prosemirror.net) | [**GITTER**](https://gitter.im/ProseMirror/prosemirror) | [**CHANGELOG**](https://github.com/ProseMirror/prosemirror-schema-list/blob/master/CHANGELOG.md) ]
 
-This is a [schema module](http://prosemirror.net/docs/ref/#schema-list) for [ProseMirror](http://prosemirror.net).
+This is a [schema module](https://prosemirror.net/docs/ref/#schema-list) for [ProseMirror](https://prosemirror.net).
 ProseMirror is a well-behaved rich semantic content editor based on
 contentEditable, with support for collaborative editing and custom
 document schemas.
 
-This [module](http://prosemirror.net/docs/ref/#schema-list) exports
+This [module](https://prosemirror.net/docs/ref/#schema-list) exports
 schema elements and commands for including lists in a ProseMirror
 editor.
 
-The [project page](http://prosemirror.net) has more information, a
-number of [examples](http://prosemirror.net/examples/) and the
-[documentation](http://prosemirror.net/docs/).
+The [project page](https://prosemirror.net) has more information, a
+number of [examples](https://prosemirror.net/examples/) and the
+[documentation](https://prosemirror.net/docs/).
 
 This code is released under an
 [MIT license](https://github.com/prosemirror/prosemirror/tree/master/LICENSE).
