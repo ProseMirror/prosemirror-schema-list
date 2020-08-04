@@ -1,3 +1,9 @@
+## 1.1.3 (2020-08-04)
+
+### Bug fixes
+
+Fix an issue where `splitListItem` could delete other content in the item when pressing enter in an empty paragraph that had other content below it in a list item.
+
 ## 1.1.2 (2019-11-20)
 
 ### Bug fixes
