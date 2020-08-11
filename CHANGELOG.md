@@ -1,3 +1,9 @@
+## 1.1.4 (2020-08-11)
+
+### Bug fixes
+
+Fix a regression where `liftListItem` couldn't lift a paragraph from the end of a composite list item.
+
 ## 1.1.3 (2020-08-04)
 
 ### Bug fixes
