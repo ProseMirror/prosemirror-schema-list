@@ -120,7 +120,7 @@ export function splitListItem(itemType) {
     if ((node && node.isBlock) || $from.depth < 2 || !$from.sameParent($to)) return false
     let grandParent = $from.node(-1)
     if (grandParent.type != itemType) return false
-    if ($from.parent.content.size == 0 && $from.node(-1).childCount == 1) {
+    if ($from.parent.content.size == 0 && $from.node(-1).childCount == $from.indexAfter(-1)) {
       // In an empty block. If this is a nested list, the wrapping
       // list item should be split. Otherwise, bail out and let next
       // command handle lifting.
