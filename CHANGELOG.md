@@ -1,3 +1,9 @@
+## 1.1.5 (2021-07-06)
+
+### Bug fixes
+
+Fix an issue where `splitListItem` would delete content when activated in a sublist that had content directly after it.
+
 ## 1.1.4 (2020-08-11)
 
 ### Bug fixes
