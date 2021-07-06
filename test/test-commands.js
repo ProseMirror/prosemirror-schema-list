@@ -78,6 +78,10 @@ describe("splitListItem", () => {
   it("can lift from a continued nested list item", () =>
      apply(doc(ul(li(p("a"), ul(li(p("b")), li(p("ok"), p("<a>"))))), p("x")), split,
            doc(ul(li(p("a"), ul(li(p("b")), li(p("ok")))), li(p("<a>"))), p("x"))))
+
+  it("correctly lifts an entirely empty sublist", () =>
+     apply(doc(ul(li(p("one"), ul(li(p("<a>"))), p("two")))), split,
+           doc(ul(li(p("one")), li(p("<a>")), li(p("two"))))))
 })
 
 describe("liftListItem", () => {
