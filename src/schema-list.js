@@ -195,6 +195,7 @@ function liftOutOfList(state, dispatch, range) {
     tr.delete(pos - 1, pos + 1)
   }
   let $start = tr.doc.resolve(range.start), item = $start.nodeAfter
+  if (tr.mapping.map(range.end) != range.start + $start.nodeAfter.nodeSize) return false
   let atStart = range.startIndex == 0, atEnd = range.endIndex == list.childCount
   let parent = $start.node(-1), indexBefore = $start.index(-1)
   if (!parent.canReplace(indexBefore + (atStart ? 0 : 1), indexBefore + 1,
