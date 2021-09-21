@@ -1,3 +1,9 @@
+## 1.1.6 (2021-09-21)
+
+### Bug fixes
+
+Fix a crash in `liftListItem` that happens when list items that can't be merged are lifted together.
+
 ## 1.1.5 (2021-07-06)
 
 ### Bug fixes
