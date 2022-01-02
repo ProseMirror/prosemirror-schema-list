@@ -124,7 +124,7 @@ export function splitListItem(itemType) {
       // In an empty block. If this is a nested list, the wrapping
       // list item should be split. Otherwise, bail out and let next
       // command handle lifting.
-      if ($from.depth == 2 || $from.node(-3).type != itemType ||
+      if ($from.depth == 3 || $from.node(-3).type != itemType ||
           $from.index(-2) != $from.node(-2).childCount - 1) return false
       if (dispatch) {
         let wrap = Fragment.empty
