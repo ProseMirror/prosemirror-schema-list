@@ -1,23 +1,24 @@
-const {EditorState, Selection, TextSelection, NodeSelection} = require("prosemirror-state")
-const {schema, eq, doc, blockquote, p, li, ol, ul} = require("prosemirror-test-builder")
-const ist = require("ist")
-const {wrapInList, splitListItem, liftListItem, sinkListItem} = require("..")
+import {EditorState, Selection, TextSelection, NodeSelection, Command} from "prosemirror-state"
+import {schema, eq, doc, blockquote, p, li, ol, ul} from "prosemirror-test-builder"
+import ist from "ist"
+import {wrapInList, splitListItem, liftListItem, sinkListItem} from "prosemirror-schema-list"
+import {Node} from "prosemirror-model"
 
-function selFor(doc) {
-  let a = doc.tag.a
+function selFor(doc: Node) {
+  let a = (doc as any).tag.a, b = (doc as any).tag.b
   if (a != null) {
     let $a = doc.resolve(a)
-    if ($a.parent.inlineContent) return new TextSelection($a, doc.tag.b != null ? doc.resolve(doc.tag.b) : undefined)
+    if ($a.parent.inlineContent) return new TextSelection($a, b != null ? doc.resolve(b) : undefined)
     else return new NodeSelection($a)
   }
   return Selection.atStart(doc)
 }
 
-function apply(doc, command, result) {
+function apply(doc: Node, command: Command, result: Node | null) {
   let state = EditorState.create({doc, selection: selFor(doc)})
   command(state, tr => state = state.apply(tr))
   ist(state.doc, result || doc, eq)
-  if (result && result.tag.a != null) ist(state.selection,  selFor(result), eq)
+  if (result && (result as any).tag.a != null) ist(state.selection,  selFor(result), eq)
 }
 
 describe("wrapInList", () => {
