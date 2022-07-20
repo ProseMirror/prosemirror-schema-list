@@ -1,3 +1,9 @@
+## 1.2.1 (2022-07-20)
+
+### Bug fixes
+
+Fix a regression where lifting a nested list could crash.
+
 ## 1.2.0 (2022-05-30)
 
 ### New features
