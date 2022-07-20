@@ -179,7 +179,9 @@ function liftToOuterList(state: EditorState, dispatch: (tr: Transaction) => void
                                   new Slice(Fragment.from(itemType.create(null, range.parent.copy())), 1, 0), 1, true))
     range = new NodeRange(tr.doc.resolve(range.$from.pos), tr.doc.resolve(endOfList), range.depth)
   }
-  dispatch(tr.lift(range, liftTarget(range)!).scrollIntoView())
+  const target = liftTarget(range)
+  if (target == null) return false
+  dispatch(tr.lift(range, target).scrollIntoView())
   return true
 }
 
