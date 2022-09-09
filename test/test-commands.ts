@@ -120,7 +120,7 @@ describe("liftListItem", () => {
      apply(doc(ul(li(p("a")), li(p("b")), li(p("c<a>")))), lift,
            doc(ul(li(p("a")), li(p("b"))), p("c"))))
 
-  it("can lift an item out of a list without creation additional nested list", () =>
+  it("joins adjacent lists when lifting an item with subitems", () =>
      apply(doc(ol(li(p("a"), ol(li(p("<a>b<b>"), ol(li(p("c")))), li(p("d")))), li(p("e")))), lift,
            doc(ol(li(p("a")), li(p("b"), ol(li(p("c")), li(p("d")))), li(p("e"))))))
 })

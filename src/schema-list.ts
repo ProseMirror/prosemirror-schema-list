@@ -1,4 +1,4 @@
-import {findWrapping, liftTarget, canSplit, ReplaceAroundStep} from "prosemirror-transform"
+import {findWrapping, liftTarget, canSplit, ReplaceAroundStep, canJoin} from "prosemirror-transform"
 import {Slice, Fragment, NodeSpec, DOMOutputSpec, NodeType, Attrs, NodeRange} from "prosemirror-model"
 import OrderedMap from "orderedmap"
 import {Command, EditorState, Transaction, NodeSelection, Selection} from "prosemirror-state"
@@ -181,7 +181,10 @@ function liftToOuterList(state: EditorState, dispatch: (tr: Transaction) => void
   }
   const target = liftTarget(range)
   if (target == null) return false
-  dispatch(tr.lift(range, target).scrollIntoView())
+  tr.lift(range, target)
+  let after = tr.mapping.map(end, -1) - 1
+  if (canJoin(tr.doc, after)) tr.join(after)
+  dispatch(tr.scrollIntoView())
   return true
 }
 
