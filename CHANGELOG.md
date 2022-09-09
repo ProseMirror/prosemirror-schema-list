@@ -1,3 +1,9 @@
+## 1.2.2 (2022-09-09)
+
+### Bug fixes
+
+Fix an issue where `liftListItem` could create adjacent sublists when lifting an item with sub-items.
+
 ## 1.2.1 (2022-07-20)
 
 ### Bug fixes
