@@ -155,6 +155,18 @@ export function splitListItem(itemType: NodeType): Command {
   }
 }
 
+/// Acts like [`splitListItem`](#schema-list.splitListItem), but without
+/// resetting the set of active marks at the cursor.
+export function splitListItemKeepMarks(itemType: NodeType) {
+  return function(state: EditorState, dispatch?: (tr: Transaction) => void) {
+    return splitListItem(itemType)(state, dispatch && (tr => {
+      let marks = state.storedMarks || (state.selection.$to.parentOffset && state.selection.$from.marks())
+      if (marks) tr.ensureMarks(marks)
+      dispatch(tr)
+    }))
+  }
+}
+
 /// Create a command to lift the list item around the selection up into
 /// a wrapping list.
 export function liftListItem(itemType: NodeType): Command {
