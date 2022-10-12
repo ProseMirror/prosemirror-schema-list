@@ -159,7 +159,9 @@ export function splitListItem(itemType: NodeType): Command {
 /// resetting the set of active marks at the cursor.
 export function splitListItemKeepMarks(itemType: NodeType) {
   return function(state: EditorState, dispatch?: (tr: Transaction) => void) {
-    return splitListItem(itemType)(state, dispatch && (tr => {
+    const split = splitListItem(itemType)
+    
+    return split(state, dispatch && (tr => {
       let marks = state.storedMarks || (state.selection.$to.parentOffset && state.selection.$from.marks())
       if (marks) tr.ensureMarks(marks)
       dispatch(tr)

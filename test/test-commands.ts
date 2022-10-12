@@ -1,7 +1,7 @@
 import {EditorState, Selection, TextSelection, NodeSelection, Command} from "prosemirror-state"
-import {schema, eq, doc, blockquote, p, li, ol, ul} from "prosemirror-test-builder"
+import {schema, eq, doc, blockquote, p, li, ol, ul, strong} from "prosemirror-test-builder"
 import ist from "ist"
-import {wrapInList, splitListItem, liftListItem, sinkListItem} from "prosemirror-schema-list"
+import {wrapInList, splitListItem, liftListItem, sinkListItem, splitListItemKeepMarks} from "prosemirror-schema-list"
 import {Node} from "prosemirror-model"
 
 function selFor(doc: Node) {
@@ -83,6 +83,14 @@ describe("splitListItem", () => {
   it("correctly lifts an entirely empty sublist", () =>
      apply(doc(ul(li(p("one"), ul(li(p("<a>"))), p("two")))), split,
            doc(ul(li(p("one")), li(p("<a>")), li(p("two"))))))
+})
+
+describe("splitListItemKeepMarks", () => {
+   let splitWithMarks = splitListItemKeepMarks(schema.nodes.list_item)
+
+   it("preserves marks after splitting", () => 
+     apply(doc(ul(li(p(strong("foo<a>bar"))))), splitWithMarks, 
+           doc(ul(li(p(strong("foo"))), li(p(strong("bar")))))))
 })
 
 describe("liftListItem", () => {
