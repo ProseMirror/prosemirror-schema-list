@@ -111,7 +111,7 @@ function doWrapInList(tr: Transaction, range: NodeRange, wrappers: {type: NodeTy
 
 /// Build a command that splits a non-empty textblock at the top level
 /// of a list item by also splitting that list item.
-export function splitListItem(itemType: NodeType): Command {
+export function splitListItem(itemType: NodeType, attrs?: Attrs): Command {
   return function(state: EditorState, dispatch?: (tr: Transaction) => void) {
     let {$from, $to, node} = state.selection as NodeSelection
     if ((node && node.isBlock) || $from.depth < 2 || !$from.sameParent($to)) return false
@@ -148,7 +148,7 @@ export function splitListItem(itemType: NodeType): Command {
     }
     let nextType = $to.pos == $from.end() ? grandParent.contentMatchAt(0).defaultType : null
     let tr = state.tr.delete($from.pos, $to.pos)
-    let types = nextType ? [null, {type: nextType}] : undefined
+    let types = nextType ? [{type: itemType, attrs}, {type: nextType}] : undefined
     if (!canSplit(tr.doc, $from.pos, 2, types)) return false
     if (dispatch) dispatch(tr.split($from.pos, 2, types).scrollIntoView())
     return true
