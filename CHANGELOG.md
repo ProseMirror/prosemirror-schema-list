@@ -1,3 +1,9 @@
+## 1.3.0 (2023-06-01)
+
+### New features
+
+`splitListItem` now takes an optional second argument to set the attributes of the new list item node. Rename parameter
+
 ## 1.2.3 (2023-05-17)
 
 ### Bug fixes
