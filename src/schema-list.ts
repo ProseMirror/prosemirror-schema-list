@@ -148,7 +148,7 @@ export function splitListItem(itemType: NodeType, itemAttrs?: Attrs): Command {
     }
     let nextType = $to.pos == $from.end() ? grandParent.contentMatchAt(0).defaultType : null
     let tr = state.tr.delete($from.pos, $to.pos)
-    let types = nextType ? [itemAttrs ? {type: itemType, itemAttrs} : null, {type: nextType}] : undefined
+    let types = nextType ? [itemAttrs ? {type: itemType, attrs: itemAttrs} : null, {type: nextType}] : undefined
     if (!canSplit(tr.doc, $from.pos, 2, types)) return false
     if (dispatch) dispatch(tr.split($from.pos, 2, types).scrollIntoView())
     return true
