@@ -23,5 +23,6 @@ The following functions are [commands](/docs/guide/#commands):
 
 @wrapInList
 @splitListItem
+@splitListItemKeepMarks
 @liftListItem
 @sinkListItem
