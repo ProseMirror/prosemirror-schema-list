@@ -1,3 +1,9 @@
+## 1.4.0 (2024-06-10)
+
+### New features
+
+The new `splitListItemKeepMarks` command can be used like `splitListItem` but will keep the active marks from the original item.
+
 ## 1.3.0 (2023-06-01)
 
 ### New features
