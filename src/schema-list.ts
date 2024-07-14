@@ -10,7 +10,7 @@ const olDOM: DOMOutputSpec = ["ol", 0], ulDOM: DOMOutputSpec = ["ul", 0], liDOM:
 /// starts counting, and defaults to 1. Represented as an `<ol>`
 /// element.
 export const orderedList = {
-  attrs: {order: {default: 1}},
+  attrs: {order: {default: 1, validate: "number"}},
   parseDOM: [{tag: "ol", getAttrs(dom: HTMLElement) {
     return {order: dom.hasAttribute("start") ? +dom.getAttribute("start")! : 1}
   }}],
