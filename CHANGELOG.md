@@ -1,3 +1,9 @@
+## 1.4.1 (2024-07-14)
+
+### Bug fixes
+
+Add attribute type validation for ordered list nodes.
+
 ## 1.4.0 (2024-06-10)
 
 ### New features
