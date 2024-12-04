@@ -1,3 +1,9 @@
+## 1.5.0 (2024-12-04)
+
+### New features
+
+The new `wrapRangeInList` function provides the implementation of the `wrapInList` command as a more flexible function.
+
 ## 1.4.1 (2024-07-14)
 
 ### Bug fixes
