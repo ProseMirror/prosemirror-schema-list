@@ -123,6 +123,10 @@ describe("liftListItem", () => {
   it("joins adjacent lists when lifting an item with subitems", () =>
      apply(doc(ol(li(p("a"), ol(li(p("<a>b<b>"), ol(li(p("c")))), li(p("d")))), li(p("e")))), lift,
            doc(ol(li(p("a")), li(p("b"), ol(li(p("c")), li(p("d")))), li(p("e"))))))
+
+  it("only joins adjacent lists when lifting if their types match", () =>
+     apply(doc(ol(li(p("a"), ul(li(p("<a>b<b>"), ol(li(p("c")))), li(p("d")))))), lift,
+           doc(ol(li(p("a")), li(p("b"), ol(li(p("c"))), ul(li(p("d"))))))))
 })
 
 describe("sinkListItem", () => {

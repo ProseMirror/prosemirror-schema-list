@@ -208,8 +208,8 @@ function liftToOuterList(state: EditorState, dispatch: (tr: Transaction) => void
   const target = liftTarget(range)
   if (target == null) return false
   tr.lift(range, target)
-  let after = tr.mapping.map(end, -1) - 1
-  if (canJoin(tr.doc, after)) tr.join(after)
+  let $after = tr.doc.resolve(tr.mapping.map(end, -1) - 1)
+  if (canJoin(tr.doc, $after.pos) && $after.nodeBefore!.type == $after.nodeAfter!.type) tr.join($after.pos)
   dispatch(tr.scrollIntoView())
   return true
 }
