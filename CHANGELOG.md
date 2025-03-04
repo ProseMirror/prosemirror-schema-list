@@ -1,3 +1,9 @@
+## 1.5.1 (2025-03-04)
+
+### Bug fixes
+
+Fix an issue where `liftListItem` would, in some circumstances, join lists of different types when they ended up on the same level.
+
 ## 1.5.0 (2024-12-04)
 
 ### New features
